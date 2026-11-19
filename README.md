@@ -1,8 +1,8 @@
-#RAG con IA
+# RAG con IA
 
-###Comandos para arrancar
+### Comandos para arrancar
 
-####Frontend:
+#### Frontend:
 
 ```bash
 cd frontend
@@ -12,7 +12,7 @@ npm run build
 npm run dev
 ```
 
-####Backend:
+#### Backend:
 
 ```bash
 python -m venv C:\venvs\ragia
