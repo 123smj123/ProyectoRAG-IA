@@ -8,8 +8,16 @@ class PageText(BaseModel):
     text: str
 
 
+class Chunk(BaseModel):
+    index: int
+    page: int
+    text: str
+
+
 class DocumentUploadResponse(BaseModel):
     id: UUID
     filename: str
     page_count: int
+    chunk_count: int
     pages: list[PageText]
+    chunks: list[Chunk]

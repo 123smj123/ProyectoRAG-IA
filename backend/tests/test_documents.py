@@ -57,3 +57,34 @@ def test_rejects_too_large(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> N
     )
 
     assert response.status_code == 413
+
+
+
+def test_upload_returns_chunks_with_pages(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(documents, "UPLOAD_PATH", tmp_path)
+    monkeypatch.setattr(documents.settings, "chunk_size", 50)
+    monkeypatch.setattr(documents.settings, "chunk_overlap", 10)
+    pdf = make_pdf(["uno dos tres cuatro cinco seis siete ocho nueve diez " * 3, "otra pagina"])
+
+    response = client.post(
+        "/api/v1/documents", files={"file": ("test.pdf", pdf, "application/pdf")}
+    )
+
+    body = response.json()
+    assert response.status_code == 201
+    assert body["chunk_count"] == len(body["chunks"]) > 2
+    assert {c["page"] for c in body["chunks"]} == {1, 2}
+
+
+def test_rejects_corrupt_pdf(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(documents, "UPLOAD_PATH", tmp_path)
+
+    response = client.post(
+        "/api/v1/documents",
+        files={"file": ("roto.pdf", b"%PDF-1.4 esto esta roto", "application/pdf")},
+    )
+
+    assert response.status_code == 422
+    assert list(tmp_path.iterdir()) == []  # no queda basura en disco

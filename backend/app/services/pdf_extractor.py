@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pymupdf
 
 from app.schemas.documents import PageText
@@ -9,9 +7,10 @@ class PdfExtractionError(Exception):
     pass
 
 
-def extract_pages(path: Path) -> list[PageText]:
+def extract_pages(data: bytes) -> list[PageText]:
+    """Extrae el texto por página desde los bytes del PDF (sin abrir ficheros en disco)."""
     try:
-        with pymupdf.open(path) as doc:
+        with pymupdf.open(stream=data, filetype="pdf") as doc:
             if doc.needs_pass:
                 raise PdfExtractionError("El PDF está protegido con contraseña.")
             return [
