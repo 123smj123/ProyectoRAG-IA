@@ -1,2 +1,10 @@
 DEVELOPMENT_GUIDE.md
 DOCUMENTATION.md
+
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+data/uploads/*
+!data/uploads/.gitkeep
